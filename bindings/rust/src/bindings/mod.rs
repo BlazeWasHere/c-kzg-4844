@@ -930,11 +930,11 @@ mod tests {
     }
 
     fn test_simple(trusted_setup_file: &Path) {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         assert!(trusted_setup_file.exists());
         let kzg_settings = KZGSettings::load_trusted_setup_file(trusted_setup_file, 0).unwrap();
 
-        let num_blobs: usize = rng.gen_range(1..16);
+        let num_blobs: usize = rng.random_range(1..16);
         let mut blobs: Vec<Blob> = (0..num_blobs)
             .map(|_| generate_random_blob(&mut rng))
             .collect();
@@ -1162,7 +1162,7 @@ mod tests {
                 let dir_path = root_dir
                     .join("fuzz")
                     .join("corpus")
-                    .join("fuzz_verify_cell_kzg_proof");
+                    .join("fuzz_verify_kzg_proof");
                 fs::create_dir_all(&dir_path).unwrap();
                 let file_path = dir_path.join(format!("data_{}.bin", index));
                 let mut file = File::create(&file_path).unwrap();
@@ -1210,7 +1210,7 @@ mod tests {
                 let dir_path = root_dir
                     .join("fuzz")
                     .join("corpus")
-                    .join("fuzz_verify_cell_kzg_proof");
+                    .join("fuzz_verify_blob_kzg_proof");
                 fs::create_dir_all(&dir_path).unwrap();
                 let file_path = dir_path.join(format!("data_{}.bin", index));
                 let mut file = File::create(&file_path).unwrap();
