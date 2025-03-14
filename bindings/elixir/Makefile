@@ -51,8 +51,8 @@ else
 	CKZG_LIBRARY_PATH = $(PRIV_DIR)/ckzg_nif$(EXTENSION)
 endif
 
-INCLUDE_DIRS = ../../src ../../blst/bindings $(ERTS_INCLUDE_DIR)
-TARGETS = $(C_SRC)/ckzg_wrap.c ../../src/ckzg.c ../../blst/$(BLST_OBJ)
+INCLUDE_DIRS = deps/src deps/blst/bindings/ $(ERTS_INCLUDE_DIR)
+TARGETS = $(C_SRC)/ckzg_wrap.c deps/src/ckzg.c deps/blst/$(BLST_OBJ)
 
 CFLAGS += ${addprefix -I,${INCLUDE_DIRS}}
 BLST_BUILDSCRIPT_FLAGS += -D__BLST_PORTABLE__
@@ -70,11 +70,32 @@ endif
 .PHONY: all
 all: blst ckzg
 
+.PHONY: deps
+deps:
+	@# Prepare the dependencies directory
+	@mkdir -p deps/c-kzg
+	@cp -r ../../blst deps
+	@# Copy files
+	@cp ../../src/Makefile deps/c-kzg
+	@cp ../../src/ckzg.c deps/c-kzg
+	@cp ../../src/ckzg.h deps/c-kzg
+	@cp -r ../../src/common deps/c-kzg
+	@cp -r ../../src/eip4844 deps/c-kzg
+	@cp -r ../../src/eip7594 deps/c-kzg
+	@cp -r ../../src/setup deps/c-kzg
+	@# Copy trusted setup
+	@cp ../../src/trusted_setup.txt deps/c-kzg
+
 .PHONY: blst
-blst:
-	$(MAKE) -C ../../src blst
+blst: deps
+	$(MAKE) -C deps/c-kzg blst
 
 .PHONY: ckzg
-ckzg: blst
+ckzg: deps blst
 	$(CC) $(CFLAGS) -o $(CKZG_LIBRARY_PATH) $(TARGETS)
 	@echo "$(CC_PRECOMPILER_CURRENT_TARGET)" > "$(PRIV_DIR)/build.txt"
+
+.PHONY: clean
+clean:
+	@rm -rf $(CKZG_LIBRARY_PATH)
+	@rm -rf deps

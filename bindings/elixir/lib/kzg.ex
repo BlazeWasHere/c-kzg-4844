@@ -1,6 +1,6 @@
 defmodule KZG do
   @moduledoc """
-  Elixir bindings for the CKZG (C-KZG) library, providing KZG polynomial commitment scheme functionality.
+  Elixir bindings for the C-KZG-4844 library, providing KZG polynomial commitment scheme functionality.
 
   This module exposes functions to:
     - load a trusted setup
