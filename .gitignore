@@ -28,3 +28,8 @@ build/
 .ccls-cache/
 
 target
+
+#zig
+.zig-cache/
+zig-pkg/
+zig-out/

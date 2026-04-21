@@ -1,5 +1,5 @@
 .PHONY: all
-all: c csharp elixir go java nim nodejs python rust
+all: c csharp elixir go java nim nodejs python rust zig
 
 .PHONY: c
 c:
@@ -38,3 +38,16 @@ rust:
 	@cargo test --features generate-bindings
 	@cargo bench --no-run
 	@cd fuzz && cargo build
+
+.PHONY: zig-check
+zig-check:
+	@submodule_hash=$$(git ls-tree HEAD blst | awk '{print $$3}'); \
+	zon_hash=$$(grep -o 'supranational/blst/archive/[0-9a-f]*' build.zig.zon | grep -o '[0-9a-f]*$$'); \
+	if [ "$$submodule_hash" != "$$zon_hash" ]; then \
+		echo "Error: blst submodule ($$submodule_hash) and build.zig.zon ($$zon_hash) are out of sync"; \
+		exit 1; \
+	fi
+
+.PHONY: zig
+zig: zig-check
+	@zig build test
